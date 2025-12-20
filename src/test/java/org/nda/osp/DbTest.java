@@ -74,7 +74,7 @@ public class DbTest {
         call.withCatalogName("TEST_PKG")
                 .withFunctionName("INSERT_DATA")
                 .declareParameters(
-                        //IMPORTANT !!!!! We have to declare results as OUT parameter FIRST !!!
+                        //IMPORTANT !!!!! We have to declare returned results as OUT parameter FIRST !!!
                         new SqlOutParameter("result", Types.NUMERIC),
                         new SqlParameter("P_K012_TITLE", Types.VARCHAR)
                         )
@@ -82,7 +82,7 @@ public class DbTest {
                 .setReturnValueRequired(true);
         Map<String, Object> inParams = new HashMap<>();
         inParams.put("P_K012_TITLE", "TITLE5");
-        System.out.println(call.executeFunction(BigDecimal.class, inParams));
+        assertDoesNotThrow(()->call.executeFunction(BigDecimal.class, inParams));
     }
 
     @Test
@@ -103,6 +103,6 @@ public class DbTest {
         SqlParameterSource inp = new MapSqlParameterSource().addValue("P_K012_TITLE", "TITLE4");
         Map<String, Object> result = call.execute(inp);
         BigDecimal pRowCount = (BigDecimal)result.get("P_ROW_COUNT");
-        System.out.println(pRowCount.intValue());
+        assertTrue(pRowCount.intValue()==1 || pRowCount.intValue()==0);
     }
 }
