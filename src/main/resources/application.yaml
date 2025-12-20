@@ -1,11 +1,15 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@//localhost:1521/FREEPDB1
-    username: JAVA_TEST
-    password: JAVA_TEST
+    url: "jdbc:oracle:thin:@//localhost:1521/FREEPDB1"
+    username: "JAVA_TEST"
+    password: "JAVA_TEST"
     driver-class-name: oracle.jdbc.OracleDriver
+
+    hikari:
+      manual: false
+      schema: "TEST_USER"
+
   jpa:
     database-platform: org.hibernate.dialect.Oracle12cDialect
     hibernate:
       ddl-auto: none
-      default_schema: TEST_USER
