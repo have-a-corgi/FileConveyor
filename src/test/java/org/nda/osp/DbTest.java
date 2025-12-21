@@ -4,6 +4,7 @@ package org.nda.osp;
 import oracle.jdbc.OracleTypes;
 import oracle.sql.OracleSQLOutput;
 import org.junit.jupiter.api.Test;
+import org.nda.osp.jpa.K012Proc;
 import org.nda.osp.jpa.K012Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,9 @@ public class DbTest {
     private JdbcTemplate jdbcTemplate;
     @Value("${spring.datasource.hikari.schema}")
     private String schemaName;
+
+    @Autowired
+    private K012Proc k012Proc;
 
     @Test
     void countTest() {
@@ -69,40 +73,12 @@ public class DbTest {
     @Test
     @Transactional
     public void callFunc_without_metadata() {
-
-        SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
-        call.withCatalogName("TEST_PKG")
-                .withFunctionName("INSERT_DATA")
-                .declareParameters(
-                        //IMPORTANT !!!!! We have to declare returned results as OUT parameter FIRST !!!
-                        new SqlOutParameter("result", Types.NUMERIC),
-                        new SqlParameter("P_K012_TITLE", Types.VARCHAR)
-                        )
-                .withoutProcedureColumnMetaDataAccess()
-                .setReturnValueRequired(true);
-        Map<String, Object> inParams = new HashMap<>();
-        inParams.put("P_K012_TITLE", "TITLE5");
-        assertDoesNotThrow(()->call.executeFunction(BigDecimal.class, inParams));
+        assertDoesNotThrow(()->k012Proc.executeFunc("TITLE5"));
     }
 
     @Test
     @Transactional
     public void callProc() {
-        //This kind of call uses settings of default schema (seems hikari.schema - on some tests basis we cam
-        // make this suggestion)
-        //But if we try to switch off withoutProcedureColumnMetaDataAccess() we get error
-        //PLS-00306: wrong number or types of arguments in call to 'INSERT_DATA_P'
-        //ORA-06550: line 1, column 7:
-        // This means we have to avoid
-        SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate);
-        call.withCatalogName("TEST_PKG")
-                .withProcedureName("INSERT_DATA_P")
-                .declareParameters(new SqlParameter("P_K012_TITLE", Types.VARCHAR),
-                        new SqlOutParameter("P_ROW_COUNT", Types.NUMERIC))
-                .withoutProcedureColumnMetaDataAccess();
-        SqlParameterSource inp = new MapSqlParameterSource().addValue("P_K012_TITLE", "TITLE4");
-        Map<String, Object> result = call.execute(inp);
-        BigDecimal pRowCount = (BigDecimal)result.get("P_ROW_COUNT");
-        assertTrue(pRowCount.intValue()==1 || pRowCount.intValue()==0);
+        assertDoesNotThrow(()->k012Proc.executeProc("TITLE5"));
     }
 }
