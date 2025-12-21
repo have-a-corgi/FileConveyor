@@ -10,6 +10,6 @@ spring:
       schema: "TEST_USER"
 
   jpa:
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: none
