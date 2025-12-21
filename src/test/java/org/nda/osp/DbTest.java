@@ -37,6 +37,13 @@ public class DbTest {
                 ()->k012Repository.insertButSkipIfUniqueConstraintsViolated("Johns"));
     }
 
+    @Transactional
+    @Test
+    void usingJdbcTest() {
+        int title5 = k012Proc.executeFuncUsingJdbcTemplate("TITLE5");
+        assertTrue(title5 == 0 || title5 == 1);
+    }
+
     @Test
     @Transactional
     public void callFunc_using_schema_and_metadata() {

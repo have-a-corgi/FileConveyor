@@ -12,8 +12,10 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -21,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @RequiredArgsConstructor
 @Repository
 public class K012ProcImpl implements K012Proc {
+
+    private static final String CALL_STATEMENT = "{call ? := test_pkg.insert_data(?)}";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -40,6 +44,8 @@ public class K012ProcImpl implements K012Proc {
         buildFunctionUsingMetadata();
 
     }
+
+
 
     //This kind of call uses settings of default schema (seems hikari.schema - on some tests basis we cam
     // make this suggestion)
@@ -66,6 +72,20 @@ public class K012ProcImpl implements K012Proc {
         Map<String, Object> inParams = new HashMap<>();
         inParams.put("P_K012_TITLE", name);
         return funcCallUsingMetadata.executeFunction(BigDecimal.class, inParams).intValue();
+    }
+
+    @Override
+    public int executeFuncUsingJdbcTemplate(String name) {
+        Map<String, Object> result = jdbcTemplate.call(
+                (cnn) -> {
+                    CallableStatement callableStatement = cnn.prepareCall(CALL_STATEMENT);
+                    callableStatement.registerOutParameter(1, Types.NUMERIC);
+                    callableStatement.setString(2, name);
+                    return callableStatement;
+                },
+                List.of(new SqlOutParameter("result", Types.NUMERIC))
+        );
+        return ((BigDecimal)result.get("result")).intValue();
     }
 
     private void buildProcCall() {
