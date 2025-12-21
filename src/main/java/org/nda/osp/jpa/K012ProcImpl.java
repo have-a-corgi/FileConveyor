@@ -1,6 +1,7 @@
 package org.nda.osp.jpa;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -25,12 +26,18 @@ public class K012ProcImpl implements K012Proc {
 
     private SimpleJdbcCall procCall;
     private SimpleJdbcCall funcCall;
+    private SimpleJdbcCall funcCallUsingMetadata;
+
+    @Value("${spring.datasource.hikari.schema}")
+    private String schemaName;
 
     @PostConstruct
     private void setUp() {
         buildFuncCall();
 
         buildProcCall();
+
+        buildFunctionUsingMetadata();
 
     }
 
@@ -54,6 +61,13 @@ public class K012ProcImpl implements K012Proc {
         return funcCall.executeFunction(BigDecimal.class, inParams).intValue();
     }
 
+    @Override
+    public int executeFuncUsingMetadata(String name) {
+        Map<String, Object> inParams = new HashMap<>();
+        inParams.put("P_K012_TITLE", name);
+        return funcCallUsingMetadata.executeFunction(BigDecimal.class, inParams).intValue();
+    }
+
     private void buildProcCall() {
         procCall = new SimpleJdbcCall(jdbcTemplate)
                 .withCatalogName("TEST_PKG")
@@ -75,4 +89,13 @@ public class K012ProcImpl implements K012Proc {
                 .withoutProcedureColumnMetaDataAccess()
                 .withReturnValue();
     }
+
+    private void buildFunctionUsingMetadata() {
+        funcCallUsingMetadata = new SimpleJdbcCall(jdbcTemplate)
+                .withCatalogName("TEST_PKG")
+                .withSchemaName(schemaName)
+                .withFunctionName("INSERT_DATA")
+                .withReturnValue();
+    }
+
 }
