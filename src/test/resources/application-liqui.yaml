@@ -15,4 +15,11 @@ spring:
       ddl-auto: none
 
   liquibase:
-    enabled: false
+    enabled: true
+    default-schema: TEST_USER
+    url: "jdbc:oracle:thin:@//localhost:1521/FREEPDB1"
+    driver-class-name: oracle.jdbc.OracleDriver
+    user: TEST_USER
+    password: TEST_USER
+    change-log: "classpath:db/db-changelog.xml"
+#    secure-parsing: false
