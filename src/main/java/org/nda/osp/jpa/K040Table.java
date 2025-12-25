@@ -9,20 +9,20 @@ import javax.persistence.Table;
 
 @Data
 @Entity
-@Table(name = "K012_ECT_CABINER")
-public class K012Table {
+@Table(name = "K040_ECT_CABINET")
+public class K040Table {
 
     @Column(name = "K001_ID")
     private String k001Id;
 
     @Id
-    @Column(name = "K012_ID")
-    private String k012Id;
+    @Column(name = "K040_ID")
+    private String k040Id;
 
-    @Column(name = "K012_PARENT_ID")
-    private String k012ParentId;
+    @Column(name = "K040_PARENT_ID")
+    private String k040ParentId;
 
-    @Column(name = "K012_TITLE")
-    private String k012Title;
+    @Column(name = "K040_TITLE")
+    private String k040Title;
 
 }

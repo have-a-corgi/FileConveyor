@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface K012Repository extends JpaRepository<K012Table, String> {
+public interface K040Repository extends JpaRepository<K040Table, String> {
 
     @Modifying
     @Query(nativeQuery = true,

@@ -3,7 +3,7 @@ package org.nda.osp;
 
 import org.junit.jupiter.api.Test;
 import org.nda.osp.jpa.K012Proc;
-import org.nda.osp.jpa.K012Repository;
+import org.nda.osp.jpa.K040Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DbTest {
 
     @Autowired
-    private K012Repository k012Repository;
+    private K040Repository k040Repository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -26,7 +26,7 @@ public class DbTest {
 
     @Test
     void countTest() {
-        assertTrue(k012Repository.findAll().size() > 0);
+        assertTrue(k040Repository.findAll().size() > 0);
     }
 
     @Transactional
@@ -34,7 +34,7 @@ public class DbTest {
     void testInsertUsingRepo() {
         //No way to execute cause this is prohibited in Oracle to perform DML inside select
         assertThrows(JpaSystemException.class,
-                ()->k012Repository.insertButSkipIfUniqueConstraintsViolated("Johns"));
+                ()-> k040Repository.insertButSkipIfUniqueConstraintsViolated("Johns"));
     }
 
     @Transactional

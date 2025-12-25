@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 @RequiredArgsConstructor
 @Repository
 public class K012ProcImpl implements K012Proc {
@@ -55,7 +53,7 @@ public class K012ProcImpl implements K012Proc {
     // This means we have to avoid the metadata using
     @Override
     public int executeProc(String name) {
-        SqlParameterSource inp = new MapSqlParameterSource().addValue("P_K012_TITLE", "TITLE4");
+        SqlParameterSource inp = new MapSqlParameterSource().addValue("P_K040_TITLE", "TITLE4");
         Map<String, Object> result = procCall.execute(inp);
         return ((BigDecimal)result.get("P_ROW_COUNT")).intValue();
     }
@@ -63,14 +61,14 @@ public class K012ProcImpl implements K012Proc {
     @Override
     public int executeFunc(String name) {
         Map<String, Object> inParams = new HashMap<>();
-        inParams.put("P_K012_TITLE", name);
+        inParams.put("P_K040_TITLE", name);
         return funcCall.executeFunction(BigDecimal.class, inParams).intValue();
     }
 
     @Override
     public int executeFuncUsingMetadata(String name) {
         Map<String, Object> inParams = new HashMap<>();
-        inParams.put("P_K012_TITLE", name);
+        inParams.put("P_K040_TITLE", name);
         return funcCallUsingMetadata.executeFunction(BigDecimal.class, inParams).intValue();
     }
 
@@ -92,7 +90,7 @@ public class K012ProcImpl implements K012Proc {
         procCall = new SimpleJdbcCall(jdbcTemplate)
                 .withCatalogName("TEST_PKG")
                 .withProcedureName("INSERT_DATA_P")
-                .declareParameters(new SqlParameter("P_K012_TITLE", Types.VARCHAR),
+                .declareParameters(new SqlParameter("P_K040_TITLE", Types.VARCHAR),
                         new SqlOutParameter("P_ROW_COUNT", Types.NUMERIC))
                 .withoutProcedureColumnMetaDataAccess();
     }
@@ -104,7 +102,7 @@ public class K012ProcImpl implements K012Proc {
                 .declareParameters(
                         //IMPORTANT !!!!! We have to declare returned results as OUT parameter FIRST !!!
                         new SqlOutParameter("result", Types.NUMERIC),
-                        new SqlParameter("P_K012_TITLE", Types.VARCHAR)
+                        new SqlParameter("P_K040_TITLE", Types.VARCHAR)
                 )
                 .withoutProcedureColumnMetaDataAccess()
                 .withReturnValue();
